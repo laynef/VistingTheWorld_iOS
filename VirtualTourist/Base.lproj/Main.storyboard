@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="5kg-E9-NgW">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Virtual Tourist-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="MapViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -15,11 +17,84 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="t0p-jr-fY4">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xuN-ZS-UuJ" userLabel="Map Stack View">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="336"/>
+                                        <subviews>
+                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="nkg-mU-QEM">
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="336"/>
+                                            </mapView>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="3G6-vh-LQX" userLabel="Button Stack View">
+                                        <rect key="frame" x="0.0" y="336" width="600" height="200"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8AG-u9-aM9">
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
+                                                <color key="backgroundColor" red="1" green="0.016661533320000001" blue="0.030134152439999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                <state key="normal" title="Tap Pins to Delete">
+                                                    <color key="titleColor" red="0.96078431369999995" green="0.96078431369999995" blue="0.96078431369999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="deleteButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="G5J-f4-zeF"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="xuN-ZS-UuJ" secondAttribute="bottom" constant="200" id="FAt-yw-H6b"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="t0p-jr-fY4" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="5c1-Rd-lTd"/>
+                            <constraint firstItem="t0p-jr-fY4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="8ny-a8-q8y"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="t0p-jr-fY4" secondAttribute="bottom" id="Ayc-BR-sPK"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="t0p-jr-fY4" secondAttribute="trailing" constant="-20" id="ePt-rk-auF"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Virtual Tourist" id="FyC-lA-kSZ">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" id="YGU-B4-G1W">
+                            <connections>
+                                <action selector="editButtonPressed:" destination="BYZ-38-t0r" id="GmX-te-LMe"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="buttonStackView" destination="3G6-vh-LQX" id="UNQ-sx-ASR"/>
+                        <outlet property="deleteButton" destination="8AG-u9-aM9" id="oLv-Zc-tP3"/>
+                        <outlet property="editButton" destination="YGU-B4-G1W" id="OAp-yP-wUm"/>
+                        <outlet property="mapStackView" destination="xuN-ZS-UuJ" id="hvq-lZ-27n"/>
+                        <outlet property="mapView" destination="nkg-mU-QEM" id="O9v-RI-4cT"/>
+                        <outlet property="wholeStackView" destination="t0p-jr-fY4" id="X0l-sz-V1r"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="1117" y="387"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="OJ8-Xp-Fee">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5kg-E9-NgW" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="R3b-RA-Bnm">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="qZs-xN-Ndq"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mzi-Lg-iVl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="425" y="387"/>
         </scene>
     </scenes>
 </document>
