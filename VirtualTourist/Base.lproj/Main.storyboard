@@ -103,33 +103,56 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PLO-ap-GVa">
-                                        <rect key="frame" x="0.0" y="200" width="600" height="336"/>
+                                        <rect key="frame" x="0.0" y="200" width="600" height="306"/>
                                         <subviews>
                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ePw-B0-p8T">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="336"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="306"/>
                                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="HHd-Ty-Fdd">
-                                                    <size key="itemSize" width="50" height="50"/>
+                                                    <size key="itemSize" width="150" height="150"/>
                                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 </collectionViewFlowLayout>
                                                 <cells>
-                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionViewCell" id="qHq-Cs-xAE">
-                                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionViewCell" id="qHq-Cs-xAE" customClass="CollectionViewCell" customModule="VirtualTourist" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                                                             <autoresizingMask key="autoresizingMask"/>
+                                                            <subviews>
+                                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="M3o-ju-Rs0">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+                                                                </imageView>
+                                                            </subviews>
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                         </view>
+                                                        <constraints>
+                                                            <constraint firstAttribute="bottomMargin" secondItem="M3o-ju-Rs0" secondAttribute="bottom" constant="-8" id="6Gw-hu-Q1W"/>
+                                                            <constraint firstAttribute="trailingMargin" secondItem="M3o-ju-Rs0" secondAttribute="trailing" constant="-8" id="Oiz-1s-rR6"/>
+                                                            <constraint firstItem="M3o-ju-Rs0" firstAttribute="top" secondItem="qHq-Cs-xAE" secondAttribute="topMargin" constant="-8" id="ohz-QE-2zj"/>
+                                                            <constraint firstItem="M3o-ju-Rs0" firstAttribute="leading" secondItem="qHq-Cs-xAE" secondAttribute="leadingMargin" constant="-8" id="tfn-vc-EmE"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <outlet property="collectionCellImageView" destination="M3o-ju-Rs0" id="f1w-O1-jAe"/>
+                                                        </connections>
                                                     </collectionViewCell>
                                                 </cells>
                                             </collectionView>
                                         </subviews>
                                     </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="SNf-xI-bM3">
+                                        <rect key="frame" x="0.0" y="506" width="600" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="knA-rF-b3A">
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="30"/>
+                                                <state key="normal" title="Get New Collection"/>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="PLO-ap-GVa" firstAttribute="top" secondItem="Dxt-0f-aQe" secondAttribute="top" constant="200" id="Ob0-1P-ZYo"/>
+                                    <constraint firstItem="PLO-ap-GVa" firstAttribute="top" secondItem="Dxt-0f-aQe" secondAttribute="top" constant="200" id="Yuv-g4-eiu"/>
                                 </constraints>
                             </stackView>
                         </subviews>
@@ -151,7 +174,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ned-v5-lCp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1761" y="387"/>
+            <point key="canvasLocation" x="1790" y="387"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="OJ8-Xp-Fee">

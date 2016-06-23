@@ -59,45 +59,10 @@ extension MapViewController {
 }
 
 // MARK: - MapViewController: MKMapViewDelegate (Pins)
-extension MapViewController: MKMapViewDelegate {
+extension MapViewController {
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        let reuseId = "Pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
-        
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
-            pinView!.pinTintColor = UIColor.redColor()
-            pinView!.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
-        }
-        else {
-            pinView!.annotation = annotation
-        }
-        
-        return pinView
-    }
     
-    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        if control == view.rightCalloutAccessoryView {
-            if let mediaURL = NSURL(string: ((view.annotation?.subtitle)!)!) {
-                if UIApplication.sharedApplication().canOpenURL(mediaURL) {
-                    UIApplication.sharedApplication().openURL(mediaURL)
-                } else {
-                    showAlert("Images unavailable", messages: "URL could not open. Please try again.")
-                }
-            }
-        }
-    }
     
-    func showAlert(title: String, messages: String) {
-        let alertController = UIAlertController(title: title, message: messages, preferredStyle: .Alert)
-        let action = UIAlertAction(title: title, style: .Default, handler: nil)
-        alertController.addAction(action)
-        presentViewController(alertController, animated: true, completion: nil)
-    }
 }
 
 

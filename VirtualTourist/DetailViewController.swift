@@ -18,7 +18,6 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var collectionStackView: UIStackView!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var collectionViewCell: UICollectionViewCell!
     
     override func viewDidLoad() {
         super.viewDidLoad()
