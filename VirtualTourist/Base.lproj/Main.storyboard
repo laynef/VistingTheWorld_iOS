@@ -72,11 +72,86 @@
                         <outlet property="mapStackView" destination="xuN-ZS-UuJ" id="hvq-lZ-27n"/>
                         <outlet property="mapView" destination="nkg-mU-QEM" id="O9v-RI-4cT"/>
                         <outlet property="wholeStackView" destination="t0p-jr-fY4" id="X0l-sz-V1r"/>
+                        <segue destination="pKS-3o-51k" kind="show" identifier="enterDetailedView" id="vGc-Df-hJU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1117" y="387"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="b1C-jW-YJ5">
+            <objects>
+                <viewController id="pKS-3o-51k" customClass="DetailViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="gbh-Kv-kYR"/>
+                        <viewControllerLayoutGuide type="bottom" id="Cdo-cT-YD8"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="sy6-bh-Elg">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Dxt-0f-aQe">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="sqW-wa-aiE">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
+                                        <subviews>
+                                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="pom-jI-7kU">
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
+                                            </mapView>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PLO-ap-GVa">
+                                        <rect key="frame" x="0.0" y="200" width="600" height="336"/>
+                                        <subviews>
+                                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ePw-B0-p8T">
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="336"/>
+                                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="HHd-Ty-Fdd">
+                                                    <size key="itemSize" width="50" height="50"/>
+                                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                </collectionViewFlowLayout>
+                                                <cells>
+                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionViewCell" id="qHq-Cs-xAE">
+                                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        </view>
+                                                    </collectionViewCell>
+                                                </cells>
+                                            </collectionView>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="PLO-ap-GVa" firstAttribute="top" secondItem="Dxt-0f-aQe" secondAttribute="top" constant="200" id="Ob0-1P-ZYo"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="Dxt-0f-aQe" secondAttribute="trailing" constant="-20" id="GVO-QM-K5D"/>
+                            <constraint firstItem="Dxt-0f-aQe" firstAttribute="leading" secondItem="sy6-bh-Elg" secondAttribute="leadingMargin" constant="-20" id="NkF-qN-5nC"/>
+                            <constraint firstItem="Dxt-0f-aQe" firstAttribute="top" secondItem="gbh-Kv-kYR" secondAttribute="bottom" id="lT7-qD-JgG"/>
+                            <constraint firstItem="Cdo-cT-YD8" firstAttribute="top" secondItem="Dxt-0f-aQe" secondAttribute="bottom" id="psC-23-xVk"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="collectionStackView" destination="PLO-ap-GVa" id="wJo-E3-i5X"/>
+                        <outlet property="collectionView" destination="ePw-B0-p8T" id="zuF-LV-ywU"/>
+                        <outlet property="mapStackView" destination="sqW-wa-aiE" id="Y2N-9j-ZMs"/>
+                        <outlet property="mapView" destination="pom-jI-7kU" id="9yT-Na-MBZ"/>
+                        <outlet property="wholeStackView" destination="Dxt-0f-aQe" id="zWa-63-p3K"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ned-v5-lCp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1761" y="387"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="OJ8-Xp-Fee">

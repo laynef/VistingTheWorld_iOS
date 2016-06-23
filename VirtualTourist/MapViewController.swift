@@ -25,11 +25,6 @@ class MapViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         initialLaunch()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     /* Delete pins that were placed */
     @IBAction func deleteButtonPressed(sender: AnyObject) {
@@ -60,6 +55,16 @@ extension MapViewController {
     private func initialLaunch() {
         buttonStackView.hidden = true
     }
+    
+}
+
+// MARK: - MapViewController (Pins)
+extension MapViewController {
+    
+}
+
+// MARK: - MapViewController (Persistance)
+extension MapViewController {
     
 }
 
