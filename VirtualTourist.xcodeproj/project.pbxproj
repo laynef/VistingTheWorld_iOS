@@ -56,7 +56,6 @@
 		D932FE8D1D1DD2EA00DC215B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D932FE981D1DDE5600DC215B /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		D932FE9A1D1DE19F00DC215B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D932FF741D1F1FA500DC215B /* VirtualTourist-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "VirtualTourist-Bridging-Header.h"; path = "VirtualTourist/VirtualTourist-Bridging-Header.h"; sourceTree = "<group>"; };
 		D932FF761D1F206300DC215B /* Model 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 2.xcdatamodel"; sourceTree = "<group>"; };
 		D932FF771D1F206300DC215B /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		D990B67D1D1B6A7300C8FB16 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,7 +134,6 @@
 		D990B6741D1B6A7300C8FB16 = {
 			isa = PBXGroup;
 			children = (
-				D932FF741D1F1FA500DC215B /* VirtualTourist-Bridging-Header.h */,
 				D990B67F1D1B6A7300C8FB16 /* VirtualTourist */,
 				D990B6971D1B6A7300C8FB16 /* VirtualTouristTests */,
 				D990B6A21D1B6A7300C8FB16 /* VirtualTouristUITests */,
@@ -487,7 +485,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = LayneFaler.VirtualTourist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "VirtualTourist/VirtualTourist-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -503,7 +500,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = LayneFaler.VirtualTourist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "VirtualTourist/VirtualTourist-Bridging-Header.h";
 			};
 			name = Release;
 		};
