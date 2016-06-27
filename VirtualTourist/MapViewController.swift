@@ -192,7 +192,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
                         CoreDataStackManager.sharedInstance().saveContext()
                     }
                     //instantiate the controller and pass the parameter location.
-                    let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionView") as! DetailViewController
+                    let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionViewCell") as! DetailViewController
                     detailController.location = self.selectedLocation
                     
                     self.annotationsLocations[self.annotation.hash] = self.selectedLocation //add to dictionary of annotations with Locations.
