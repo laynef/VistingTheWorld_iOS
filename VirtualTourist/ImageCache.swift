@@ -10,6 +10,7 @@ import UIKit
 
 class ImageCache {
     
+    
     private var inMemoryCache = NSCache()
     
     // MARK: - Retreiving images

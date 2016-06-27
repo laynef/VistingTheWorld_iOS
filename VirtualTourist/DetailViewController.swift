@@ -10,16 +10,16 @@ import UIKit
 import MapKit
 import CoreData
 
-// reuse id: collectionViewCell
+// reuse id: Cell
+// restore id: CollectionViewCell
 
 class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetchedResultsControllerDelegate {
     
-    @IBOutlet weak var wholeStackView: UIStackView!
-    @IBOutlet weak var mapStackView: UIStackView!
-    @IBOutlet weak var collectionStackView: UIStackView!
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var imageInfoView: UIImageView!
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var infoLabel: UILabel!
+    @IBOutlet weak var imageInfoView: UIImageView!
+    @IBOutlet weak var detailIndicator: UIActivityIndicatorView!
     
     //MARK: Variables:Other
     var prefetchedPhotos: [Photo]!//We put the Photo Objects in a variable to use in NSFetchedResultsControllerDelegate methods
@@ -42,6 +42,7 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
         
         imageInfoView?.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.70)
         imageInfoView.hidden = true
+        infoLabel.hidden = true
         
         
     }
@@ -74,7 +75,7 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
     //Add the lazy fetchedResultsController property. Photos are already fetched(from flickr) and saved in Core data before this screen, but we fetch them again to use the NSFetchedResultsControllerDelegate methods
     lazy var fetchedResultsController: NSFetchedResultsController = {
         
-        let fetchRequest = NSFetchRequest(entityName: "Photo")
+        let fetchRequest = NSFetchRequest(entityName: "Photo") // Photo
         
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         fetchRequest.predicate = NSPredicate(format: "location == %@", self.location);
@@ -108,7 +109,7 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
         case .Update:
             let cell = self.collectionView.cellForItemAtIndexPath(indexPath!) as! CollectionViewCell
             let photo = controller.objectAtIndexPath(indexPath!) as! Photo
-            cell.collectionCellImageView.image = photo.image
+            cell.collectionImageView.image = photo.image
         default:
             return
         }
@@ -129,17 +130,19 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
         
         //If the photo image(imagepaths and titles are saved in Core Data) is saved using NSKeyedArchiver / NSKeyedUnarchiver we display it right away else we download it using its imagepath
         if let photo = NSKeyedUnarchiver.unarchiveObjectWithFile(Flickr.sharedInstance().imagePath((prefetchedPhotos![indexPath.row].imagePath as NSString).lastPathComponent)) as? UIImage {
-            cell.collectionCellImageView.image = photo
+            cell.collectIndicator.stopAnimating()
+            cell.collectionImageView.image = photo
         }else{
-            cell.collectionCellImageView.image = UIImage(named: "PlaceHolder") //Default placeholder
+            cell.collectIndicator.startAnimating()
+            cell.collectionImageView.image = UIImage(named: "PlaceHolder") //Default placeholder
             Flickr.sharedInstance().downloadImageAndSetCell(prefetchedPhotos![indexPath.row].imagePath,cell: cell,completionHandler: { (success, errorString) in
                 if success {
                     dispatch_async(dispatch_get_main_queue(), {
-
+                        cell.collectIndicator.stopAnimating()
                     })
                 }else{
                     dispatch_async(dispatch_get_main_queue(), {
-
+                        cell.collectIndicator.stopAnimating()
                     })
                 }
             })
@@ -189,10 +192,10 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
     //Generate a new collection of (12) images
     func newCollection() -> Bool { //I added a return value to exit when there is no connection
         
-        let networkReachability = Reachability.reachabilityForInternetConnection
-        let networkStatus = try! networkReachability().currentReachabilityStatus
+        let networkReachability = try! Reachability.reachabilityForInternetConnection()
+        let networkStatus = networkReachability.currentReachabilityStatus
         
-        if(networkStatus == .NotReachable) {// Before searching fοr an additonal Photos in Flickr check if there is an available internet connection
+        if(networkStatus == .NotReachable){// Before searching fοr an additonal Photos in Flickr check if there is an available internet connection
             displayMessageBox("No Network Connection")
             return false
         }
@@ -245,11 +248,19 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
     //Custom Made information Box using alpha value to create a black transparent background.
     func informationBox(msg:String?,let animate:Bool){
         if let _ = msg{
+            if(animate){
+                detailIndicator.startAnimating()
+            }
             imageInfoView.hidden = false
+            infoLabel.hidden = false
+            infoLabel.text = msg
         }else{
             imageInfoView.hidden = true
+            infoLabel.hidden = true
+            detailIndicator.stopAnimating() //It doesn't hurt to stop animation in case it didn't start before
         }
     }
     
     
 }
+

@@ -12,11 +12,11 @@ import CoreData
 
 class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
     
-    @IBOutlet weak var editButton: UIBarButtonItem!
-    @IBOutlet weak var mapStackView: UIStackView!
-    @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var wholeStackView: UIStackView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var imageInfoView: UIImageView!
+    @IBOutlet weak var infoLabel: UILabel!
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
     
     //MARK:Other Variables
     var tapRecognizer: UITapGestureRecognizer? = nil //Recognizer for the search bar
@@ -75,6 +75,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
             self.locations = sectionInfo.objects as! [Location]
         }
         
+        imageInfoView?.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.70)
+        imageInfoView.hidden = true
+        infoLabel.hidden = true
         self.addKeyboardDismissRecognizer()
     }
     
@@ -110,12 +113,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         //Start Geocoding. (Search Button Clicked)
         if let address = searchBar.text{
             let geocoder = CLGeocoder()
+            informationBox("Gecoding...", animate: true) // The information box displays while geocoding
             
             
             geocoder.geocodeAddressString(address, completionHandler: {(placemarks, error) -> Void in
                 if let _ = error {
                     let alert = UIAlertController(title: "", message: "Geocoding failed", preferredStyle: UIAlertControllerStyle.Alert)
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                    self.informationBox(nil, animate: false)
                 } else {
                     if let placemark = placemarks?[0]  {
                         //Center the map
@@ -125,6 +130,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
                         self.mapView.setRegion(region, animated: true)
                     }
                 }
+                self.informationBox(nil, animate: false) //Dismiss information Box
             })
         }
     }
@@ -140,7 +146,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         // For available internet connection
         let networkReachability = try! Reachability.reachabilityForInternetConnection()
         let networkStatus = networkReachability.currentReachabilityStatus
-        if(networkStatus == .NotReachable) {
+        if(networkStatus == .NotReachable){
             displayMessageBox("No Network Connection")
             return false
         }
@@ -176,6 +182,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
             //Create the new Location and save it to the variable selectedLocation
             selectedLocation = Location(dictionary: ["latitude":self.annotation.coordinate.latitude,"longitude":self.annotation.coordinate.longitude], context: sharedContext)
             applicationDelegate.stats.locationsAdded += 1 //Location Added. For Stats.
+            informationBox("Connecting to Flickr",animate:true)
             Flickr.sharedInstance().populateLocationPhotos(selectedLocation) { (success,photosArray, errorString) in
                 if success {
                     if let pd = photosArray{//We create the Photo instances from the photosArray and save them.The actual files aren't downloaded yet.
@@ -192,12 +199,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
                         CoreDataStackManager.sharedInstance().saveContext()
                     }
                     //instantiate the controller and pass the parameter location.
-                    let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionViewCell") as! DetailViewController
+                    let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionView") as! DetailViewController
                     detailController.location = self.selectedLocation
                     
                     self.annotationsLocations[self.annotation.hash] = self.selectedLocation //add to dictionary of annotations with Locations.
                     
                     dispatch_async(dispatch_get_main_queue()) {
+                        self.informationBox(nil,animate:false)
                         self.navigationController!.pushViewController(detailController, animated: true)
                     }
                     
@@ -206,6 +214,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
                     
                 } else {
                     dispatch_async(dispatch_get_main_queue(), {
+                        self.informationBox(nil,animate:false)
                         self.displayMessageBox(errorString!)//Its appropriate at this point to display an Alert
                         self.mapView.removeAnnotation(self.annotation)
                         CoreDataStackManager.sharedInstance().deleteObject(self.selectedLocation)
@@ -222,18 +231,20 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
     
     //Select Annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionViewCell") as! DetailViewController
+        let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionView") as! DetailViewController
         if let l = annotationsLocations[view.annotation!.hash]{//Determine the location instance from the hash of selected annotation
             detailController.location = l
             selectedLocation = l //Set The selected location as a global variable
             
             if let p = l.photos{
                 if p.isEmpty{ //If all the photos of the album were deleted we fetch another batch of Photos.
+                    informationBox("Connecting to Flickr",animate:true)
                     Flickr.sharedInstance().populateLocationPhotos(selectedLocation) { (success,photosArray, errorString) in
                         if success {
                             dispatch_async(dispatch_get_main_queue()) {
+                                self.informationBox(nil,animate:false)
                                 //instantiate the controller and pass the parameter location.
-                                let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionViewCell") as! DetailViewController
+                                let detailController = self.storyboard!.instantiateViewControllerWithIdentifier("CollectionView") as! DetailViewController
                                 detailController.location = l
                                 
                                 if let pd = photosArray{//We create the Photo instances from the photosArray and save them.The actual files aren't downloaded yet.
@@ -247,6 +258,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
                             }
                         } else {
                             dispatch_async(dispatch_get_main_queue(), {
+                                self.informationBox(nil,animate:false)
                                 self.displayMessageBox("No available Photos Found")//Its appropriate at this point to display an Alert
                                 self.mapView.removeAnnotation(view.annotation!)
                                 CoreDataStackManager.sharedInstance().deleteObject(self.selectedLocation)
@@ -371,6 +383,22 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         let alert = UIAlertController(title: "", message: message, preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    //A custom made info box.
+    func informationBox(msg:String?,let animate:Bool){
+        if let _ = msg{
+            if(animate){
+                indicator.startAnimating()
+            }
+            imageInfoView.hidden = false
+            infoLabel.hidden = false
+            infoLabel.text = msg
+        }else{
+            imageInfoView.hidden = true
+            infoLabel.hidden = true
+            indicator.stopAnimating() //It doesn't hurt to stop animation in case it didn't start before
+        }
     }
     
     

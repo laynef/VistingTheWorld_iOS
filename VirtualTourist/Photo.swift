@@ -18,7 +18,7 @@ class Photo: NSManagedObject {
         static let Title = "title"
         static let ImagePath = "imagePath"
     }
-
+    
     
     @NSManaged var title: String
     @NSManaged var imagePath: String
@@ -48,5 +48,5 @@ class Photo: NSManagedObject {
             Flickr.Caches.imageCache.storeImage(image, withIdentifier: imagePath)
         }
     }
-
+    
 }

@@ -10,6 +10,8 @@ import UIKit
 
 class CollectionViewCell: UICollectionViewCell {
 
-    @IBOutlet weak var collectionCellImageView: UIImageView!
+    @IBOutlet weak var collectionImageView: UIImageView!
+    @IBOutlet weak var collectIndicator: UIActivityIndicatorView!
+
     
 }

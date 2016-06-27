@@ -25,7 +25,7 @@ class Location: NSManagedObject {
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
-
+    
     init(dictionary: [String : AnyObject], context: NSManagedObjectContext) {
         
         // Core Data
@@ -36,5 +36,5 @@ class Location: NSManagedObject {
         latitude = dictionary[Keys.Latitude] as! NSNumber
         longitude = dictionary[Keys.Longitude] as! NSNumber
     }
-   
+    
 }
