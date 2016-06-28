@@ -1,9 +1,9 @@
 //
 //  Location.swift
-//  Virtual Tourist
+//  VirtualTourist
 //
-//  Created by Spiros Raptis on 19/04/2015.
-//  Copyright (c) 2015 Spiros Raptis. All rights reserved.
+//  Created by Layne Faler on 6/27/16.
+//  Copyright © 2016 Layne Faler. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ import CoreData
 @objc(Location)
 class Location: NSManagedObject {
     
-    struct Keys {
+    struct LocationKeys {
         static let Latitude = "latitude"
         static let Longitude = "longitude"
     }
@@ -33,8 +33,9 @@ class Location: NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
         
         // Dictionary
-        latitude = dictionary[Keys.Latitude] as! NSNumber
-        longitude = dictionary[Keys.Longitude] as! NSNumber
+        latitude = dictionary[LocationKeys.Latitude] as! NSNumber
+        longitude = dictionary[LocationKeys.Longitude] as! NSNumber
     }
+
     
 }

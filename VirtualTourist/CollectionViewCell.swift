@@ -12,6 +12,5 @@ class CollectionViewCell: UICollectionViewCell {
 
     @IBOutlet weak var collectionImageView: UIImageView!
     @IBOutlet weak var collectIndicator: UIActivityIndicatorView!
-
     
 }

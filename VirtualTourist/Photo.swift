@@ -1,20 +1,19 @@
 //
 //  Photo.swift
-//  Virtual Tourist
+//  VirtualTourist
 //
-//  Created by Spiros Raptis on 19/04/2015.
-//  Copyright (c) 2015 Spiros Raptis. All rights reserved.
+//  Created by Layne Faler on 6/27/16.
+//  Copyright © 2016 Layne Faler. All rights reserved.
 //
 
 import Foundation
 import CoreData
 import UIKit
 
-
 @objc(Photo)
 class Photo: NSManagedObject {
-
-    struct Keys {
+    
+    struct PhotoKeys {
         static let Title = "title"
         static let ImagePath = "imagePath"
     }
@@ -32,9 +31,9 @@ class Photo: NSManagedObject {
         let entity =  NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)!
         super.init(entity: entity,insertIntoManagedObjectContext: context)
         
-        title = dictionary[Keys.Title] as! String
+        title = dictionary[PhotoKeys.Title] as! String
         
-        if let pathForImage = dictionary[Keys.ImagePath] as? String {
+        if let pathForImage = dictionary[PhotoKeys.ImagePath] as? String {
             imagePath = pathForImage
         }
         
@@ -43,10 +42,9 @@ class Photo: NSManagedObject {
     var image: UIImage? {
         get {
             return Flickr.Caches.imageCache.imageWithIdentifier(imagePath)
-        }
-        set {
+        } set {
             Flickr.Caches.imageCache.storeImage(image, withIdentifier: imagePath)
         }
     }
-    
 }
+    

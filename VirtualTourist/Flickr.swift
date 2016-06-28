@@ -1,9 +1,9 @@
 //
 //  Flickr.swift
-//  Virtual Tourist
-//  This class contains functions and helper methods to connect to Flickr API
-//  Created by Spiros Raptis on 19/04/2015.
-//  Copyright (c) 2015 Spiros Raptis. All rights reserved.
+//  VirtualTourist
+//
+//  Created by Layne Faler on 6/27/16.
+//  Copyright © 2016 Layne Faler. All rights reserved.
 //
 
 import Foundation
@@ -11,6 +11,7 @@ import CoreData
 import UIKit
 
 class Flickr: NSObject {
+    
     typealias CompletionHander = (result: AnyObject!, error: NSError?) -> Void
     var session: NSURLSession
     
@@ -18,86 +19,78 @@ class Flickr: NSObject {
         session = NSURLSession.sharedSession()
         super.init()
     }
-    //MARK:Connecting to Flickr
-    //It is used to fetch the list of images and the corresponding paths,titles... etc.
-    func populateLocationPhotos(let location:Location,completionHandler: (success: Bool,helperArray: [[String]]?, errorString: String?) -> Void) {
+    
+    func populateLocationPhotos(let location:Location,completionHandler: (success: Bool , array: [[String]]?, error: String?) -> Void) {
         
-        //In order to better randomization the first time we search for that location
-        //We search the first(1) page. But in subsequent turns (new collection button pressed
-        //,after we got the total pages value, We get results from a random page also.
-        var page:Int = 1
-        if let p = location.pages{
+        var page: Int = 1
+        
+        if let p = location.pages {
             page = Int(arc4random_uniform(UInt32(Double(p)))) + 1
         }
         
-        let resource = Flickr.Constants.BASE_URL
+        let resource = Flickr.FlickrConstants.BASE_URL
         
-        let parameters = [ //The parameters(arguments) for the method used: flickr.photos.search
-            Flickr.MethodArguments.method: Flickr.Constants.METHOD_NAME,
-            Flickr.MethodArguments.apiKey: Flickr.Constants.API_KEY,
-            Flickr.MethodArguments.bbox: getBbox(location),
-            Flickr.MethodArguments.safeSearch: Flickr.Constants.SAFE_SEARCH,
-            Flickr.MethodArguments.extras: Flickr.Constants.EXTRAS,
-            Flickr.MethodArguments.format: Flickr.Constants.DATA_FORMAT,
-            Flickr.MethodArguments.noJsonCallBack: Flickr.Constants.NO_JSON_CALLBACK,
-            Flickr.MethodArguments.perPage:Flickr.Constants.MAXIMUM_PER_PAGE, //The maximum a bounding box query can return per page
-            Flickr.MethodArguments.page:String(page)
+        let methodParameters = [
+            Flickr.FlickrConstantsArguments.method: Flickr.FlickrConstants.METHOD_NAME,
+            Flickr.FlickrConstantsArguments.apiKey: Flickr.FlickrConstants.API_KEY,
+            Flickr.FlickrConstantsArguments.bbox: getBbox(location),
+            Flickr.FlickrConstantsArguments.safeSearch: Flickr.FlickrConstants.SAFE_SEARCH,
+            Flickr.FlickrConstantsArguments.extras: Flickr.FlickrConstants.EXTRAS,
+            Flickr.FlickrConstantsArguments.format: Flickr.FlickrConstants.FORMAT,
+            Flickr.FlickrConstantsArguments.noJsonCallBack: Flickr.FlickrConstants.NO_JSON_CALLBACK,
+            Flickr.FlickrConstantsArguments.perPage:Flickr.FlickrConstants.MAX_PER_PAGE,
+            Flickr.FlickrConstantsArguments.page:String(page)
         ]
         
-        Flickr.sharedInstance().taskForResource(resource, parameters: parameters){ JSONResult, error  in
-            if let error = error {
-                print(error)
-            } else {
-                if let photosDictionary = JSONResult.valueForKey(Flickr.JsonResponse.photos) as? [String:AnyObject] {
-                    if let photosArray = photosDictionary[Flickr.JsonResponse.photo] as? [[String: AnyObject]] {
+        Flickr.sharedInstance().taskForResource(resource, parameters: methodParameters) { JSONResult, error  in
+            guard (error != nil) else {
+                if let photosDictionary = JSONResult.valueForKey(Flickr.FlickrJsonResponseKeys.photos) as? [String: AnyObject] {
+                    if let photosArray = photosDictionary[Flickr.FlickrJsonResponseKeys.photo] as? [[String: AnyObject]] {
                         
                         let totalPhotosVal = photosArray.count
                         if totalPhotosVal > 0 {
                             var noPhotosToDisplay = totalPhotosVal
-                            if totalPhotosVal > Flickr.Constants.maxNumberOfImagesToDisplay{ //The maximum number of images that will be displayed by the collection view is maxNumberOfImagesToDisplay. I think this is a right assumption to put a cap considering the scope of the project.
-                                noPhotosToDisplay = Flickr.Constants.maxNumberOfImagesToDisplay
+                            if totalPhotosVal > Flickr.FlickrConstants.maxNumberOfImagesDisplayed {
+                                noPhotosToDisplay = Flickr.FlickrConstants.maxNumberOfImagesDisplayed
                             }
                             
-                            if let totalPhotos = photosDictionary[Flickr.JsonResponse.pages] as? Int {
-                                dispatch_async(dispatch_get_main_queue()){
-                                    location.pages = totalPhotos //Total number of pages for a location.If the result has more than one lines
-                                    //The subsequent "new Album" searches in other pages alse. Because every flickr reply contains only one page (max 250 results)
+                            if let totalPhotos = photosDictionary[Flickr.FlickrJsonResponseKeys.pages] as? Int {
+                                dispatch_async(dispatch_get_main_queue()) {
+                                    location.pages = totalPhotos
                                 }
                             }
                             
-                            var listPhotos:[Int] = [] //The list of photo indexes to display. It is used to avoid displaying the same images when the number of images are low.(arc4random_uniform function for low number of images ouputs the same number)
-                            var helperArray = [[String]]() //It will consist of arrays of [title,imagePath] which then will be used to populate the core data entities
-                            for _ in 0 ..< noPhotosToDisplay{
+                            var listPhotos: [Int] = []
+                            var helperArray = [[String]]()
+                            
+                            for _ in 0 ..< noPhotosToDisplay {
                                 
-                                //Sometimes if the total number of photos is low the random generator produces the same pictures
-                                //and with this while statement we ensure that all the displayed photos are different and for a low
-                                // max number of pictures(250) this while statement is not very costly.
-                                var randomPhotoIndex = Int(arc4random_uniform(UInt32(photosArray.count)))
-                                while (listPhotos.contains(randomPhotoIndex)){
-                                    randomPhotoIndex = Int(arc4random_uniform(UInt32(photosArray.count)))
+                                var randomPhotoIndex = self.randNumGenerator(photosArray.count)
+                                while listPhotos.contains(randomPhotoIndex) {
+                                    randomPhotoIndex = self.randNumGenerator(photosArray.count)
                                 }
                                 
                                 listPhotos.append(randomPhotoIndex)
                                 
                                 let photoDictionary = photosArray[randomPhotoIndex] as [String: AnyObject]
-                                let photoTitle = photoDictionary[Flickr.JsonResponse.title] as! String
-                                let imageUrlString = photoDictionary[Flickr.JsonResponse.imageType] as! String
+                                let photoTitle = photoDictionary[Flickr.FlickrJsonResponseKeys.title] as! String
+                                let imageUrlString = photoDictionary[Flickr.FlickrJsonResponseKeys.imageType] as! String
                                 helperArray.append([photoTitle,imageUrlString])
                             }
-                            completionHandler(success: true,helperArray:helperArray, errorString: nil)
+                            completionHandler(success: true, array:helperArray, error: nil)
                         } else {
-                            completionHandler(success: false,helperArray:nil, errorString: "No available Photos Found")
+                            completionHandler(success: false, array: nil, error: NetworkErrorMessages.noPhotos)
                         }
                     } else {
-                        completionHandler(success: false,helperArray:nil, errorString: "No available Photos Found")
+                        completionHandler(success: false, array: nil, error: NetworkErrorMessages.noPhotos)
                     }
                     
                 }
+                return
             }
         }
     }
     
-    //It downloads the images from the already saved image paths to be in turn saved too in the CoreData
     func downloadImageAndSetCell(let imagePath:String,let cell:CollectionViewCell,completionHandler: (success: Bool, errorString: String?) -> Void){
         let imgURL = NSURL(string: imagePath)
         let request: NSURLRequest = NSURLRequest(URL: imgURL!)
@@ -106,7 +99,7 @@ class Flickr: NSObject {
             
             if let error = downloadError {
                 _ = Flickr.errorForData(data, response: response, error: error)
-                completionHandler(success: false, errorString: "Could not download image \(imagePath)")
+                completionHandler(success: false, errorString: "Didn't download image \(imagePath)")
             } else {
                 let image = UIImage(data: data!)
                 
@@ -122,11 +115,6 @@ class Flickr: NSObject {
         
     }
     
-    
-    
-    
-    //MARK:Saving Related
-    //It returns the actual path in the iOS readable format
     func imagePath( selectedFilename:String) ->String{
         let manager = NSFileManager.defaultManager()
         let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
@@ -135,22 +123,17 @@ class Flickr: NSObject {
     
     
     var sharedContext: NSManagedObjectContext {
-        return CoreDataStackManager.sharedInstance().managedObjectContext!
+        return ManagingCoreData.sharedInstance().managingObjectContent!
     }
     
-    //MARK: create bounding box string.
-    //return the bounding box: "bbox" flickr parameter
     func getBbox(let location:Location) -> String{
-        let maxLong:NSNumber = (location.longitude as Double) + Flickr.Constants.boxSideLength
-        let maxLat:NSNumber = (location.latitude as Double) + Flickr.Constants.boxSideLength
+        let maxLong:NSNumber = (location.longitude as Double) + Flickr.FlickrConstants.boxSideLength
+        let maxLat:NSNumber = (location.latitude as Double) + Flickr.FlickrConstants.boxSideLength
         let lat = "\(location.latitude)"
         let long = "\(location.longitude)"
         let a = long + "," + lat + "," + "\(maxLong)" + "," + "\(maxLat)"
         return a
     }
-    
-    
-    // MARK: - All purpose task method for data
     
     func taskForResource(resource: String, parameters: [String : AnyObject], completionHandler: CompletionHander) -> NSURLSessionDataTask {
         
@@ -178,10 +161,6 @@ class Flickr: NSObject {
     }
     
     
-    
-    
-    // MARK: - Helpers
-    
     class func errorForData(data: NSData?, response: NSURLResponse?, error: NSError) -> NSError {
         
         if let parsedResult = (try? NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)) as? [String : AnyObject] {
@@ -189,7 +168,7 @@ class Flickr: NSObject {
                 
                 let userInfo = [NSLocalizedDescriptionKey : errorMessage]
                 
-                return NSError(domain: "Flickr Error", code: 1, userInfo: userInfo)
+                return NSError(domain: DataMessageErrorss.domainError, code: 1, userInfo: userInfo)
             }
         }
         
@@ -197,18 +176,16 @@ class Flickr: NSObject {
     }
     
     
-    // Parsing the JSON
-    
     class func parseJSONWithCompletionHandler(data: NSData, completionHandler: CompletionHander) {
         var parsingError: NSError? = nil
         
         let parsedResult: AnyObject?
-        do {
-            parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-        } catch let error as NSError {
-            parsingError = error
-            parsedResult = nil
-        }
+            do {
+                parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+            } catch let error as NSError {
+                parsingError = error
+                parsedResult = nil
+            }
         if let error = parsingError {
             completionHandler(result: nil, error: error)
         } else {
@@ -216,7 +193,7 @@ class Flickr: NSObject {
         }
     }
     
-    // URL Encoding a dictionary into a parameter string
+    
     
     class func escapedParameters(parameters: [String : AnyObject]) -> String {
         
@@ -224,26 +201,20 @@ class Flickr: NSObject {
         
         for (key, value) in parameters {
             
-            // make sure that it is a string value
             let stringValue = "\(value)"
             
-            // Escape it
             let escapedValue = stringValue.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
-            
-            // Append it
             
             if let unwrappedEscapedValue = escapedValue {
                 urlVars += [key + "=" + "\(unwrappedEscapedValue)"]
             } else {
-                print("Warning: trouble excaping string \"\(stringValue)\"")
+                print("\"\(stringValue)\"")
             }
         }
         
         return (!urlVars.isEmpty ? "?" : "") + urlVars.joinWithSeparator("&")
     }
     
-    
-    // MARK: - Shared Instance
     
     class func sharedInstance() -> Flickr {
         
@@ -253,8 +224,6 @@ class Flickr: NSObject {
         
         return Singleton.sharedInstance
     }
-    
-    // MARK: - Shared Date Formatter
     
     class var sharedDateFormatter: NSDateFormatter  {
         
@@ -272,12 +241,15 @@ class Flickr: NSObject {
         return Singleton.dateFormatter
     }
     
-    // MARK: - Shared Image Cache
-    
     struct Caches {
         static let imageCache = ImageCache()
     }
+}
+
+extension Flickr {
     
-    
+    func randNumGenerator(count: Int) -> Int {
+        return Int(arc4random_uniform(UInt32(count)))
+    }
     
 }
