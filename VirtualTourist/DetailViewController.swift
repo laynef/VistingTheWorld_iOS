@@ -145,7 +145,7 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
         return UIEdgeInsets(top: 2.0, left: 2.0, bottom: 2.0, right: 10.0)
     }
     
-    func setRegion(){
+    func setRegion() {
         let span = MKCoordinateSpanMake(2, 2)
         let coordinates = CLLocationCoordinate2D(latitude: Double(location.latitude), longitude: Double(location.longitude))
         let region = MKCoordinateRegion(center: coordinates, span: span)
@@ -174,17 +174,17 @@ class DetailViewController: UIViewController, UICollectionViewDelegate, NSFetche
             if success {
                 dispatch_async(dispatch_get_main_queue(), {
                     
-                    for p in self.location.photos!{
+                    for p in self.location.photos! {
                         ManagingCoreData.sharedInstance().deletePicObject(p)
                     }
                     
                     if let pd = photosArray {
-                        for p in pd{
+                        for p in pd {
                             let photo = Photo(dictionary: ["title": p[0], "imagePath": p[1]], context: self.sharedContext)
                             photo.location = self.location
                             applicationDelegate.stats.photosDisplayed += 1
-                            ManagingCoreData.sharedInstance().saveContent()
                         }
+                        ManagingCoreData.sharedInstance().saveContent()
                     }
                     self.informationBox(nil, animate:false)
                     self.newCollectionButton.enabled = true
