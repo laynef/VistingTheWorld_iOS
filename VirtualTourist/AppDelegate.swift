@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch _ {
             print("Fetching Erorr")
         }
+        
         let objects = fetchedResultsController.fetchedObjects as! [Statistics]
         
         if (objects).isEmpty {

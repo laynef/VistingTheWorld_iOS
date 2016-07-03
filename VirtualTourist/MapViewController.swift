@@ -43,7 +43,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegat
         
         if  !sectionInfo.objects!.isEmpty{
             self.locations = sectionInfo.objects as! [Location]
-            for loc in locations{
+            for loc in locations {
                 let annotation = MKPointAnnotation()
                 let tapPoint = CLLocationCoordinate2D(latitude: Double(loc.latitude), longitude: Double(loc.longitude))
                 annotation.coordinate = tapPoint

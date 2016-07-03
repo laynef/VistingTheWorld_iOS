@@ -118,7 +118,7 @@ extension ManagingCoreData {
         
         do {
             try manager.removeItemAtPath(filePath)
-        } catch{
+        } catch {
             print("File wasn't deleted: \(filePath)")
         }
     }

@@ -211,8 +211,8 @@ extension DetailViewController {
     }
     
     func informationBox(msg:String?,let animate:Bool){
-        if let _ = msg{
-            if(animate){
+        if let _ = msg {
+            if (animate) {
                 detailIndicator.startAnimating()
             }
             infoImageView.hidden = false
