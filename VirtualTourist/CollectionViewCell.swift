@@ -14,3 +14,5 @@ class CollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var collectIndicator: UIActivityIndicatorView!
     
 }
+
+//
